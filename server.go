@@ -28,14 +28,17 @@ func parseEscapeHTML(data string) string {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-
+	fmt.Fprintf(w, "<html><head><title>"+configProject.ProjectName+"</title></head><body>")
+	fmt.Fprintf(w, "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css\">\n<script src=\"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js\"></script>")
 	fmt.Fprintf(w, "<h1>"+configProject.ProjectName+"</h1>")
 	fmt.Fprintf(w, "<h2>Project path: "+pathProject+"</h2>")
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
-	for filename, data := range fileData {
+	for _, filename := range projectFiles {
 		fmt.Fprintf(w, "<h4>"+filename+"</h4>")
-		fmt.Fprintf(w, "<pre>")
-		fmt.Fprintf(w, parseEscapeHTML(data))
-		fmt.Fprintf(w, "</pre>")
+		fmt.Fprintf(w, "<pre><code>")
+		fmt.Fprintf(w, parseEscapeHTML(fileData[filename]))
+		fmt.Fprintf(w, "</code></pre>")
 	}
+	fmt.Fprintf(w, "<script>hljs.highlightAll();</script>")
+	fmt.Fprintf(w, "</body></html>")
 }
