@@ -24,9 +24,9 @@ func initServer() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
-	for _, filename := range projectFiles {
-		//showFilelistHtml(w, filename)
-		showSourceHtml(w, filename)
+	for _, filepath := range projectFiles {
+		//showFilelistHtml(w, filepath)
+		showSourceHtml(w, filepath)
 	}
 	footerHtml(w)
 }
@@ -69,7 +69,10 @@ func headerHtml(w http.ResponseWriter) {
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 		<h1 id="top">`+configProject.ProjectName+`</h1>
 		<span>Project path: `+pathProject+`</span>
-		<a href="#top" class="float-right">Go Top</a>`)
+		<div class="float-right">
+			`+getFilelistDropdownHtml()+`
+			<a href="#top">Go Top</a>
+		</div>`)
 }
 
 func footerHtml(w http.ResponseWriter) {
@@ -79,12 +82,27 @@ func footerHtml(w http.ResponseWriter) {
 		</body></html>`)
 }
 
-func showFilelistHtml(w http.ResponseWriter, filename string) {
-	fmt.Fprintf(w, `<a href="/`+filename+`">`+getFilename(filename)+`</a><br>`)
+func getFilelistDropdownHtml() string {
+	var html string = `<select onchange="location = this.value;">`
+	for _, filepath := range projectFiles {
+		filename := getFilename(filepath)
+		html += `<option value="#` + getFileID(filename) + `">` + filename + `</option>`
+	}
+	html += `</select>`
+	return html
 }
 
-func getFilename(filename string) string {
-	return strings.ReplaceAll(filename, pathProject, "")
+func showFilelistHtml(w http.ResponseWriter, filepath string) {
+	filename := getFilename(filepath)
+	fmt.Fprintf(w, `<a href="#`+filename+`">`+filename+`</a><br>`)
+}
+
+func getFilename(filepath string) string {
+	return strings.ReplaceAll(filepath, pathProject, "")
+}
+
+func getFileID(filename string) string {
+	return strings.ReplaceAll(filename, "/", ".")
 }
 
 func parseEscapeHTML(data string) string {
@@ -94,13 +112,15 @@ func parseEscapeHTML(data string) string {
 	return data
 }
 
-func showSourceHtml(w http.ResponseWriter, filename string) {
-	fmt.Fprintf(w, `<h4>`+getFilename(filename)+`</h4><pre>`)
+func showSourceHtml(w http.ResponseWriter, filepath string) {
+	filename := getFilename(filepath)
+	fmt.Fprintf(w, `<div id="#`+getFileID(filename)+`" class="mark"></div>
+						<h4>`+filename+`</h4><pre>`)
 	if configProject.LangHighlight != "" {
 		fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
 	} else {
 		fmt.Fprintf(w, `<code>`)
 	}
-	fmt.Fprintf(w, parseEscapeHTML(fileData[filename]))
+	fmt.Fprintf(w, parseEscapeHTML(fileData[filepath]))
 	fmt.Fprintf(w, `</code></pre>`)
 }
