@@ -114,7 +114,7 @@ func parseEscapeHTML(data string) string {
 
 func showSourceHtml(w http.ResponseWriter, filepath string) {
 	filename := getFilename(filepath)
-	fmt.Fprintf(w, `<div id="#`+getFileID(filename)+`" class="mark"></div>
+	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
 						<h4>`+filename+`</h4><pre>`)
 	if configProject.LangHighlight != "" {
 		fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
