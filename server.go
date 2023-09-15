@@ -31,15 +31,42 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
 	for _, filename := range projectFiles {
+		//showFilelistHtml(w, filename)
 		showSourceHtml(w, filename)
-		break
 	}
 	footerHtml(w)
 }
 
 func headerHtml(w http.ResponseWriter) {
-	fmt.Fprintf(w, `<html><head><title>`+configProject.ProjectName+`</title></head><body>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
+	fmt.Fprintf(w, `
+		<html data-theme="dark">
+			<head>
+			<title>`+configProject.ProjectName+`</title>
+			</head>
+			<style>
+			body {
+				background-color: #1e1e1e;
+				color: #d4d4d4;
+				font-family: monospace;
+			}
+			a {
+				color: #d4d4d4;
+			}
+			a:hover {
+				color: #d4d4d4;
+				text-decoration: underline;
+			}
+			pre {
+				background-color: #2d2d2d;
+				padding: 10px;
+				border-radius: 5px;
+			}
+			code {
+				font-family: monospace;
+			}
+			</style>
+		<body>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 		<h1>`+configProject.ProjectName+`</h1>
 		<span>Project path: `+pathProject+`</span>`)
@@ -50,6 +77,10 @@ func footerHtml(w http.ResponseWriter) {
 		hljs.highlightAll();
 		</script>
 		</body></html>`)
+}
+
+func showFilelistHtml(w http.ResponseWriter, filename string) {
+	fmt.Fprintf(w, `<a href="/`+filename+`">`+getFilename(filename)+`</a><br>`)
 }
 
 func getFilename(filename string) string {
