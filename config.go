@@ -16,17 +16,19 @@ var (
 )
 
 type config struct {
-	ProjectName  string   `json:"project_name"`
-	ExtFilter    []string `json:"ext_filter"`
-	MethodFilter []string `json:"method_filter"`
+	ProjectName   string   `json:"project_name"`
+	LangHighlight string   `json:"lang_highlight"`
+	ExtFilter     []string `json:"ext_filter"`
+	MethodFilter  []string `json:"method_filter"`
 }
 
 func createConfig() bool {
 	fmt.Println("Creating config file")
 	newConfig := config{
-		ProjectName:  "New Project",
-		ExtFilter:    []string{".go"},
-		MethodFilter: []string{"func (\\(.*\\))?(.*)\\(.*?\\).*{"},
+		ProjectName:   "New Project",
+		LangHighlight: "go",
+		ExtFilter:     []string{".go"},
+		MethodFilter:  []string{"func (\\(.*\\))?(.*)\\(.*?\\).*{"},
 	}
 
 	configFile, err := os.Create(path.Join(pathProject, configFilename))
