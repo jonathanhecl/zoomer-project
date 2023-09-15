@@ -21,12 +21,6 @@ func initServer() {
 	srv.ListenAndServe()
 }
 
-func parseEscapeHTML(data string) string {
-	data = strings.ReplaceAll(data, "<", "&lt;")
-	data = strings.ReplaceAll(data, ">", "&gt;")
-	return data
-}
-
 func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
@@ -64,12 +58,18 @@ func headerHtml(w http.ResponseWriter) {
 			code {
 				font-family: monospace;
 			}
+			.float-right {
+				position: fixed;
+				bottom: 10px;
+				right: 20px;
+			}
 			</style>
 		<body>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-		<h1>`+configProject.ProjectName+`</h1>
-		<span>Project path: `+pathProject+`</span>`)
+		<h1 id="top">`+configProject.ProjectName+`</h1>
+		<span>Project path: `+pathProject+`</span>
+		<a href="#top" class="float-right">Go Top</a>`)
 }
 
 func footerHtml(w http.ResponseWriter) {
@@ -85,6 +85,13 @@ func showFilelistHtml(w http.ResponseWriter, filename string) {
 
 func getFilename(filename string) string {
 	return strings.ReplaceAll(filename, pathProject, "")
+}
+
+func parseEscapeHTML(data string) string {
+	data = strings.ReplaceAll(data, "<", "&lt;")
+	data = strings.ReplaceAll(data, ">", "&gt;")
+
+	return data
 }
 
 func showSourceHtml(w http.ResponseWriter, filename string) {
