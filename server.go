@@ -121,6 +121,6 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	} else {
 		fmt.Fprintf(w, `<code>`)
 	}
-	fmt.Fprintf(w, parseEscapeHTML(fileData[filepath]))
+	fmt.Fprintf(w, parseEscapeHTML(filesData[filepath].getContent()))
 	fmt.Fprintf(w, `</code></pre>`)
 }

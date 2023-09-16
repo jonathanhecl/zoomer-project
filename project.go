@@ -6,12 +6,31 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
+	"strings"
 )
+
+type fileData struct {
+	Content []string
+	Methods []int
+}
 
 var (
 	projectFiles []string
-	fileData     map[string]string
+	filesData    map[string]fileData
 )
+
+func (f fileData) getContent() string {
+	return strings.Join(f.Content, "\n")
+}
+
+func (f fileData) getMethods() []string {
+	methods := []string{}
+	for _, method := range f.Methods {
+		methods = append(methods, f.Content[method])
+	}
+	return methods
+}
 
 func loadProject() bool {
 	fmt.Println("Project path:", pathProject)
@@ -21,7 +40,7 @@ func loadProject() bool {
 	}
 
 	projectFiles = make([]string, 0)
-	fileData = make(map[string]string, 0)
+	filesData = make(map[string]fileData)
 
 	var err error
 
@@ -58,7 +77,23 @@ func loadFileData(filename string) error {
 		return err
 	}
 
-	fileData[filename] = string(data)
+	content := []string{}
+	methods := []int{}
+
+	for i, line := range strings.Split(string(data), "\n") {
+		content = append(content, line)
+		for _, method := range configProject.MethodFilter {
+			re, _ := regexp.Compile(method)
+			if re.MatchString(line) {
+				methods = append(methods, i)
+			}
+		}
+	}
+
+	filesData[filename] = fileData{
+		Content: content,
+		Methods: methods,
+	}
 
 	return nil
 }
