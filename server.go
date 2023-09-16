@@ -58,6 +58,17 @@ func headerHtml(w http.ResponseWriter) {
 			code {
 				font-family: monospace;
 			}
+			.collumns {
+				display: flex; 
+				flex-direction: row;	
+			}
+			.collumns > .codes {
+				width: 70%%;
+				min-width: 400px;
+			}
+			.collumns > .fields {
+				width: 30%%;
+			}
 			.float-right {
 				position: fixed;
 				bottom: 10px;
@@ -115,7 +126,10 @@ func parseEscapeHTML(data string) string {
 func showSourceHtml(w http.ResponseWriter, filepath string) {
 	filename := getFilename(filepath)
 	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
-						<h4>`+filename+`</h4><pre>`)
+						<h4>`+filename+`</h4>`)
+	fmt.Fprintf(w, `<div class="collumns">`)
+	fmt.Fprintf(w, `<div class="codes">`)
+	fmt.Fprintf(w, `<pre>`)
 	if configProject.LangHighlight != "" {
 		fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
 	} else {
@@ -123,4 +137,23 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	}
 	fmt.Fprintf(w, parseEscapeHTML(filesData[filepath].getContent()))
 	fmt.Fprintf(w, `</code></pre>`)
+	fmt.Fprintf(w, `</div>`)
+	if len(configProject.UserFields) > 0 {
+		fmt.Fprintf(w, `<div class="fields">`)
+		for _, field := range configProject.UserFields {
+			fmt.Fprintf(w, `<div class="field">`)
+			if field.Type == EnumBoolean {
+				fmt.Fprintf(w, `<input type="checkbox" name="`+field.Name+`" value="`+field.Name+`" `)
+				//if filesData[filepath].UserFields[field.Name] == "true" {
+				//	fmt.Fprintf(w, `checked`)
+				//}
+				fmt.Fprintf(w, `> `+field.Name)
+			} else {
+				//fmt.Fprintf(w, field.Name+": "+filesData[filepath].UserFields[field.Name])
+			}
+			fmt.Fprintf(w, `</div>`)
+		}
+		fmt.Fprintf(w, `</div>`)
+	}
+	fmt.Fprintf(w, `</div>`)
 }
