@@ -15,11 +15,24 @@ var (
 	configProject config
 )
 
+type EnumFieldType string
+
+const (
+	EnumTextBox EnumFieldType = "textbox"
+	EnumBoolean EnumFieldType = "boolean"
+)
+
+type UserField struct {
+	Name string
+	Type EnumFieldType
+}
+
 type config struct {
-	ProjectName   string   `json:"project_name"`
-	LangHighlight string   `json:"lang_highlight"`
-	ExtFilter     []string `json:"ext_filter"`
-	MethodFilter  []string `json:"method_filter"`
+	ProjectName   string      `json:"project_name"`
+	LangHighlight string      `json:"lang_highlight"`
+	ExtFilter     []string    `json:"ext_filter"`
+	MethodFilter  []string    `json:"method_filter"`
+	UserFields    []UserField `json:"user_fields"`
 }
 
 func createConfig() bool {
@@ -29,6 +42,7 @@ func createConfig() bool {
 		LangHighlight: "go",
 		ExtFilter:     []string{".go"},
 		MethodFilter:  []string{"func (\\(.*\\))?(.*)\\(.*?\\).*{"},
+		UserFields:    []UserField{{"Checked", EnumBoolean}},
 	}
 
 	configFile, err := os.Create(path.Join(pathProject, configFilename))
