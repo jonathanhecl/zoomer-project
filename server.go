@@ -62,6 +62,10 @@ func headerHtml(w http.ResponseWriter) {
 				display: flex; 
 				flex-direction: row;	
 			}
+			.collumns > .codes-full {
+				width: 100%%;
+				min-width: 400px;
+			}
 			.collumns > .codes {
 				width: 70%%;
 				min-width: 400px;
@@ -128,7 +132,11 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
 						<h4>`+filename+`</h4>`)
 	fmt.Fprintf(w, `<div class="collumns">`)
-	fmt.Fprintf(w, `<div class="codes">`)
+	if len(configProject.UserFields) > 0 {
+		fmt.Fprintf(w, `<div class="codes">`)
+	} else {
+		fmt.Fprintf(w, `<div class="codes-full">`)
+	}
 	fmt.Fprintf(w, `<pre>`)
 	if configProject.LangHighlight != "" {
 		fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
