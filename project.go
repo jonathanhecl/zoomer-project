@@ -10,15 +10,28 @@ import (
 	"strings"
 )
 
+type fieldsData struct {
+	Field string
+	Value string
+}
+
 type fileData struct {
-	Content []string
-	Methods []int
+	Content    []string
+	Methods    []int
+	UserFields map[string]fieldsData
 }
 
 var (
 	projectFiles []string
 	filesData    map[string]fileData
 )
+
+func (f fieldsData) getValue(field string) string {
+	if f.Field == field {
+		return f.Value
+	}
+	return ""
+}
 
 func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")

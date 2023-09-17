@@ -148,18 +148,21 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	fmt.Fprintf(w, `</div>`)
 	if len(configProject.UserFields) > 0 {
 		fmt.Fprintf(w, `<div class="fields">`)
-		for _, field := range configProject.UserFields {
-			fmt.Fprintf(w, `<div class="field">`)
-			if field.Type == EnumBoolean {
-				fmt.Fprintf(w, `<input type="checkbox" name="`+field.Name+`" value="`+field.Name+`" `)
-				//if filesData[filepath].UserFields[field.Name] == "true" {
-				//	fmt.Fprintf(w, `checked`)
-				//}
-				fmt.Fprintf(w, `> `+field.Name)
-			} else {
-				//fmt.Fprintf(w, field.Name+": "+filesData[filepath].UserFields[field.Name])
+		for _, method := range filesData[filepath].getMethods() {
+			fmt.Fprintf(w, `<strong>`+method+`</strong><br>`)
+			for _, field := range configProject.UserFields {
+				fmt.Fprintf(w, `<div class="field">`)
+				if field.Type == EnumBoolean {
+					fmt.Fprintf(w, `<input type="checkbox" name="`+field.Name+`" value="`+field.Name+`" `)
+					if filesData[filepath].UserFields[method].getValue(field.Name) == "1" {
+						fmt.Fprintf(w, `checked`)
+					}
+					fmt.Fprintf(w, `> `+field.Name)
+				} else {
+					//fmt.Fprintf(w, field.Name+": "+filesData[filepath].UserFields[field.Name])
+				}
+				fmt.Fprintf(w, `</div>`)
 			}
-			fmt.Fprintf(w, `</div>`)
 		}
 		fmt.Fprintf(w, `</div>`)
 	}
