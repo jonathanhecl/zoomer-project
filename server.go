@@ -16,6 +16,7 @@ func initServer() {
 	}
 
 	http.HandleFunc("/", handler)
+	http.HandleFunc("/save", saveHandler)
 
 	fmt.Println("Server is listening on port", listenPort)
 	srv.ListenAndServe()
@@ -97,9 +98,10 @@ func footerHtml(w http.ResponseWriter) {
 		function saveChange(obj) {
 			var name = obj.name;
 			var value = obj.checked ? 1 : 0;
-			//var xhttp = new XMLHttpRequest();
-			console.log(name);
-			console.log(value);
+			var xhttp = new XMLHttpRequest();
+			xhttp.open("POST", "/save", true);
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhttp.send("name="+name+"&value="+value);	
 		}
 
 		</script>
@@ -178,4 +180,9 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 		fmt.Fprintf(w, `</div>`)
 	}
 	fmt.Fprintf(w, `</div>`)
+}
+
+func saveHandler(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	fmt.Println(r.Form)
 }
