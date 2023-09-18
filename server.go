@@ -122,7 +122,9 @@ func showFilelistHtml(w http.ResponseWriter, filepath string) {
 }
 
 func getFilename(filepath string) string {
-	return strings.ReplaceAll(filepath, pathProject, "")
+	filename := strings.ReplaceAll(filepath, pathProject, "")
+	filename = strings.ReplaceAll(filename, "\\", "/")
+	return filename
 }
 
 func getFileID(filename string) string {
@@ -162,7 +164,7 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 			for _, field := range configProject.UserFields {
 				fmt.Fprintf(w, `<div class="field">`)
 				if field.Type == EnumBoolean {
-					fmt.Fprintf(w, `<input type="checkbox" name="`+filepath+method+field.Name+`" value="`+field.Name+`" `)
+					fmt.Fprintf(w, `<input type="checkbox" name="`+filename+" "+method+" "+field.Name+`" value="`+field.Name+`" `)
 					if filesData[filepath].UserFields[method].getValue(field.Name) == "1" {
 						fmt.Fprintf(w, `checked`)
 					}

@@ -40,7 +40,10 @@ func (f fileData) getContent() string {
 func (f fileData) getMethods() []string {
 	methods := []string{}
 	for _, method := range f.Methods {
-		methods = append(methods, f.Content[method])
+		mtd := f.Content[method]
+		mtd = strings.ReplaceAll(mtd, "\n", "")
+		mtd = strings.ReplaceAll(mtd, "\r", "")
+		methods = append(methods, mtd)
 	}
 	return methods
 }
