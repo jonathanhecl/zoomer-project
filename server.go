@@ -93,6 +93,15 @@ func headerHtml(w http.ResponseWriter) {
 func footerHtml(w http.ResponseWriter) {
 	fmt.Fprintf(w, `<script>
 		hljs.highlightAll();
+
+		function saveChange(obj) {
+			var name = obj.name;
+			var value = obj.checked ? 1 : 0;
+			//var xhttp = new XMLHttpRequest();
+			console.log(name);
+			console.log(value);
+		}
+
 		</script>
 		</body></html>`)
 }
@@ -157,7 +166,7 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 					if filesData[filepath].UserFields[method].getValue(field.Name) == "1" {
 						fmt.Fprintf(w, `checked`)
 					}
-					fmt.Fprintf(w, `> `+field.Name)
+					fmt.Fprintf(w, ` onchange="saveChange(this)">`+field.Name)
 				} else {
 					//fmt.Fprintf(w, field.Name+": "+filesData[filepath].UserFields[field.Name])
 				}
