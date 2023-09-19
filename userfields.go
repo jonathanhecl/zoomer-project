@@ -16,11 +16,11 @@ type fieldsData struct {
 }
 
 func waitToSave() {
-	for {
-		time.Sleep(time.Second * 3)
-		//if time.Since(lastSave) > time.Second*30 {
-		saveFileUserFields()
-		//}
+	c := time.Tick(time.Second * 30)
+	for range c {
+		if time.Since(lastSave) > time.Second*30 {
+			saveFileUserFields()
+		}
 	}
 }
 
