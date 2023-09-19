@@ -171,8 +171,10 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 						fmt.Fprintf(w, `checked`)
 					}
 					fmt.Fprintf(w, ` onchange="saveChange(this)">`+field.Name)
-				} else {
-					//fmt.Fprintf(w, field.Name+": "+filesData[filepath].UserFields[field.Name])
+				} else if field.Type == EnumTextBox {
+					fmt.Fprintf(w, `<textarea name="`+filename+" "+method+" "+field.Name+`" onchange="saveChange(this)">`)
+					fmt.Fprintf(w, filesData[filepath].UserFields[method].getValue(field.Name))
+					fmt.Fprintf(w, `</textarea>`)
 				}
 				fmt.Fprintf(w, `</div>`)
 			}
