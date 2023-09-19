@@ -97,7 +97,12 @@ func footerHtml(w http.ResponseWriter) {
 
 		function saveChange(obj) {
 			var name = obj.name;
-			var value = obj.checked ? 1 : 0;
+			var value = "";
+			if (obj.type == "checkbox") {
+				value = obj.checked ? 1 : 0;
+			} else if (obj.type == "textarea") {
+				value = obj.value;
+			}
 			var xhttp = new XMLHttpRequest();
 			xhttp.open("POST", "/save", true);
 			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
