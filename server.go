@@ -79,6 +79,27 @@ func headerHtml(w http.ResponseWriter) {
 				bottom: 10px;
 				right: 20px;
 			}
+			.fields > .method {
+				font-size: large;
+    			text-align: center;
+				padding: 2em 0 0;
+			}
+			.field > label {
+				border: 1px solid #ccc;
+				padding: 0.6em;
+				margin: 0;
+				display: block;
+				color: #ccc;
+			}
+			.field > label:hover {
+				 background:#333;
+				 cursor:pointer;
+			}
+			.field textarea {
+				background-color: #333;
+				color: #ddd;
+				display: block;
+			}
 			</style>
 		<body>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
@@ -167,19 +188,19 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	if len(configProject.UserFields) > 0 {
 		fmt.Fprintf(w, `<div class="fields">`)
 		for _, method := range filesData[filepath].getMethods() {
-			fmt.Fprintf(w, `<strong>`+method+`</strong><br>`)
+			fmt.Fprintf(w, `<div class="method">`+method+`</div><br>`)
 			for _, field := range configProject.UserFields {
 				fmt.Fprintf(w, `<div class="field">`)
 				if field.Type == EnumBoolean {
-					fmt.Fprintf(w, `<input type="checkbox" name="`+filename+" "+method+" "+field.Name+`" value="`+field.Name+`" `)
+					fmt.Fprintf(w, `<label><input type="checkbox" name="`+filename+" "+method+" "+field.Name+`" value="`+field.Name+`" `)
 					if filesData[filepath].UserFields[method].getValue(field.Name) == "1" {
 						fmt.Fprintf(w, `checked`)
 					}
-					fmt.Fprintf(w, ` onchange="saveChange(this)">`+field.Name)
+					fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
 				} else if field.Type == EnumTextBox {
-					fmt.Fprintf(w, `<textarea name="`+filename+" "+method+" "+field.Name+`" onchange="saveChange(this)">`)
+					fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+filename+" "+method+" "+field.Name+`" onchange="saveChange(this)">`)
 					fmt.Fprintf(w, filesData[filepath].UserFields[method].getValue(field.Name))
-					fmt.Fprintf(w, `</textarea>`)
+					fmt.Fprintf(w, `</textarea></label>`)
 				}
 				fmt.Fprintf(w, `</div>`)
 			}
