@@ -25,6 +25,9 @@ func initServer() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
+
+	fmt.Println(len(userFields))
+
 	for _, filepath := range projectFiles {
 		//showFilelistHtml(w, filepath)
 		showSourceHtml(w, filepath)
@@ -187,13 +190,13 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 				fmt.Fprintf(w, `<div class="field">`)
 				if field.Type == EnumBoolean {
 					fmt.Fprintf(w, `<label><input type="checkbox" name="`+createFieldName(filename, method, field.Name)+`" value="`+field.Name+`" `)
-					if filesData[filename].getUserValue(method, field.Name) == "1" {
+					if getUserValue(filename, method, field.Name) == "1" {
 						fmt.Fprintf(w, `checked`)
 					}
 					fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
 				} else if field.Type == EnumTextBox {
 					fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+createFieldName(filename, method, field.Name)+`" onchange="saveChange(this)">`)
-					fmt.Fprintf(w, filesData[filename].getUserValue(method, field.Name))
+					fmt.Fprintf(w, getUserValue(filename, method, field.Name))
 					fmt.Fprintf(w, `</textarea></label>`)
 				}
 				fmt.Fprintf(w, `</div>`)
@@ -215,7 +218,7 @@ func disassemblyFieldName(fieldName string) (string, string, string) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	if !saveUserFields(r.Form.Get("name"), r.Form.Get("value")) {
+	if !changedUserField(r.Form.Get("name"), r.Form.Get("value")) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

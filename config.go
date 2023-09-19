@@ -90,24 +90,3 @@ func loadConfig() bool {
 	fmt.Println("Config loaded! (", configProject.ProjectName, ")")
 	return true
 }
-
-func loadUserFields() bool {
-	if !isValidFile(path.Join(pathProject, userFieldsFilename)) {
-		return false
-	}
-
-	userFieldsFile, err := os.Open(path.Join(pathProject, userFieldsFilename))
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	decoder := json.NewDecoder(userFieldsFile)
-	err = decoder.Decode(&configProject.UserFields)
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-
-	return true
-}

@@ -11,49 +11,18 @@ import (
 	"time"
 )
 
-type fieldsData struct {
-	Method string
-	Field  string
-	Value  string
-}
-
 type fileData struct {
-	Content    []string
-	Methods    []int
-	UserFields []fieldsData
+	Content []string
+	Methods []int
 }
 
 var (
 	projectFiles []string
-	filesData    map[string]*fileData
+	filesData    map[string]fileData
+	userFields   []fieldsData
 	lastChange   time.Time
 	lastSave     time.Time
 )
-
-func (f *fileData) setUserValue(method string, field string, value string) {
-	found := false
-
-	for i := range f.UserFields {
-		if f.UserFields[i].Method == method && f.UserFields[i].Field == field {
-			(*f).UserFields[i].Value = value
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		(*f).UserFields = append(f.UserFields, fieldsData{method, field, value})
-	}
-}
-
-func (f fileData) getUserValue(method string, field string) string {
-	for _, uf := range f.UserFields {
-		if uf.Method == method && uf.Field == field {
-			return uf.Value
-		}
-	}
-	return ""
-}
 
 func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")
@@ -83,13 +52,13 @@ func loadProject() bool {
 		return false
 	}
 
+	lastChange = time.Now()
+	lastSave = lastChange
+
 	loadUserFields()
 
-	lastChange = time.Now()
-	lastSave = time.Now()
-
 	projectFiles = make([]string, 0)
-	filesData = make(map[string]*fileData)
+	filesData = make(map[string]fileData)
 
 	var err error
 
@@ -136,11 +105,11 @@ func loadFileData(filename string) error {
 		}
 	}
 
-	filesData[getFilename(filename)] = &fileData{
-		Content:    content,
-		Methods:    methods,
-		UserFields: make([]fieldsData, 0),
+	filesData[getFilename(filename)] = fileData{
+		Content: content,
+		Methods: methods,
 	}
+	userFields = make([]fieldsData, 0)
 
 	return nil
 }
@@ -178,10 +147,12 @@ func scanProject(root string, list []string) ([]string, error) {
 	return filesOut, nil
 }
 
-func saveUserFields(name string, value string) bool {
+func changedUserField(name string, value string) bool {
+	fmt.Println("Changed:", name, value)
+
 	filename, method, field := disassemblyFieldName(name)
 
-	filesData[filename].setUserValue(method, field, value)
+	setUserValue(filename, method, field, value)
 	lastChange = time.Now()
 
 	return true
