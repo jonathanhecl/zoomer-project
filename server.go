@@ -184,5 +184,6 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	fmt.Println(r.Form)
+	fmt.Println(r.Form.Get("name"))
+	fmt.Println(r.Form.Get("value"))
 }
