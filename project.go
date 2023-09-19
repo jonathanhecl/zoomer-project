@@ -8,27 +8,49 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type fieldsData struct {
-	Field string
-	Value string
+	Method string
+	Field  string
+	Value  string
 }
 
 type fileData struct {
 	Content    []string
 	Methods    []int
-	UserFields map[string]fieldsData
+	UserFields []fieldsData
 }
 
 var (
 	projectFiles []string
-	filesData    map[string]fileData
+	filesData    map[string]*fileData
+	lastChange   time.Time
+	lastSave     time.Time
 )
 
-func (f fieldsData) getValue(field string) string {
-	if f.Field == field {
-		return f.Value
+func (f *fileData) setUserValue(method string, field string, value string) {
+	found := false
+
+	for i := range f.UserFields {
+		if f.UserFields[i].Method == method && f.UserFields[i].Field == field {
+			(*f).UserFields[i].Value = value
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		(*f).UserFields = append(f.UserFields, fieldsData{method, field, value})
+	}
+}
+
+func (f fileData) getUserValue(method string, field string) string {
+	for _, uf := range f.UserFields {
+		if uf.Method == method && uf.Field == field {
+			return uf.Value
+		}
 	}
 	return ""
 }
@@ -48,6 +70,12 @@ func (f fileData) getMethods() []string {
 	return methods
 }
 
+func getFilename(filepath string) string {
+	filename := strings.ReplaceAll(filepath, pathProject, "")
+	filename = strings.ReplaceAll(filename, "\\", "/")
+	return filename
+}
+
 func loadProject() bool {
 	fmt.Println("Project path:", pathProject)
 
@@ -55,8 +83,13 @@ func loadProject() bool {
 		return false
 	}
 
+	loadUserFields()
+
+	lastChange = time.Now()
+	lastSave = time.Now()
+
 	projectFiles = make([]string, 0)
-	filesData = make(map[string]fileData)
+	filesData = make(map[string]*fileData)
 
 	var err error
 
@@ -65,9 +98,6 @@ func loadProject() bool {
 		fmt.Println(err)
 		return false
 	}
-
-	//fmt.Println(projectFiles)
-	//fmt.Println(fileData)
 
 	return true
 }
@@ -106,16 +136,16 @@ func loadFileData(filename string) error {
 		}
 	}
 
-	filesData[filename] = fileData{
-		Content: content,
-		Methods: methods,
+	filesData[getFilename(filename)] = &fileData{
+		Content:    content,
+		Methods:    methods,
+		UserFields: make([]fieldsData, 0),
 	}
 
 	return nil
 }
 
 func scanProject(root string, list []string) ([]string, error) {
-
 	var filesOut []string = list
 	var filesTmp []string
 
@@ -146,5 +176,13 @@ func scanProject(root string, list []string) ([]string, error) {
 	}
 
 	return filesOut, nil
+}
 
+func saveUserFields(name string, value string) bool {
+	filename, method, field := disassemblyFieldName(name)
+
+	filesData[filename].setUserValue(method, field, value)
+	lastChange = time.Now()
+
+	return true
 }

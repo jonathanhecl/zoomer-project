@@ -149,12 +149,6 @@ func showFilelistHtml(w http.ResponseWriter, filepath string) {
 	fmt.Fprintf(w, `<a href="#`+filename+`">`+filename+`</a><br>`)
 }
 
-func getFilename(filepath string) string {
-	filename := strings.ReplaceAll(filepath, pathProject, "")
-	filename = strings.ReplaceAll(filename, "\\", "/")
-	return filename
-}
-
 func getFileID(filename string) string {
 	return strings.ReplaceAll(filename, "/", ".")
 }
@@ -182,24 +176,24 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	} else {
 		fmt.Fprintf(w, `<code>`)
 	}
-	fmt.Fprintf(w, parseEscapeHTML(filesData[filepath].getContent()))
+	fmt.Fprintf(w, parseEscapeHTML(filesData[filename].getContent()))
 	fmt.Fprintf(w, `</code></pre>`)
 	fmt.Fprintf(w, `</div>`)
 	if len(configProject.UserFields) > 0 {
 		fmt.Fprintf(w, `<div class="fields">`)
-		for _, method := range filesData[filepath].getMethods() {
+		for _, method := range filesData[filename].getMethods() {
 			fmt.Fprintf(w, `<div class="method">`+method+`</div><br>`)
 			for _, field := range configProject.UserFields {
 				fmt.Fprintf(w, `<div class="field">`)
 				if field.Type == EnumBoolean {
-					fmt.Fprintf(w, `<label><input type="checkbox" name="`+filename+" "+method+" "+field.Name+`" value="`+field.Name+`" `)
-					if filesData[filepath].UserFields[method].getValue(field.Name) == "1" {
+					fmt.Fprintf(w, `<label><input type="checkbox" name="`+createFieldName(filename, method, field.Name)+`" value="`+field.Name+`" `)
+					if filesData[filename].getUserValue(method, field.Name) == "1" {
 						fmt.Fprintf(w, `checked`)
 					}
 					fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
 				} else if field.Type == EnumTextBox {
-					fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+filename+" "+method+" "+field.Name+`" onchange="saveChange(this)">`)
-					fmt.Fprintf(w, filesData[filepath].UserFields[method].getValue(field.Name))
+					fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+createFieldName(filename, method, field.Name)+`" onchange="saveChange(this)">`)
+					fmt.Fprintf(w, filesData[filename].getUserValue(method, field.Name))
 					fmt.Fprintf(w, `</textarea></label>`)
 				}
 				fmt.Fprintf(w, `</div>`)
@@ -210,8 +204,21 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	fmt.Fprintf(w, `</div>`)
 }
 
+func createFieldName(filename string, method string, field string) string {
+	return filename + `<>` + method + `<>` + field
+}
+
+func disassemblyFieldName(fieldName string) (string, string, string) {
+	fields := strings.Split(fieldName, `<>`)
+	return fields[0], fields[1], fields[2]
+}
+
 func saveHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	fmt.Println(r.Form.Get("name"))
-	fmt.Println(r.Form.Get("value"))
+	if !saveUserFields(r.Form.Get("name"), r.Form.Get("value")) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
