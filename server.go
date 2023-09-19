@@ -25,9 +25,6 @@ func initServer() {
 func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
-
-	fmt.Println(len(userFields))
-
 	for _, filepath := range projectFiles {
 		//showFilelistHtml(w, filepath)
 		showSourceHtml(w, filepath)

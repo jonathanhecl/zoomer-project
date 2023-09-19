@@ -109,7 +109,6 @@ func loadFileData(filename string) error {
 		Content: content,
 		Methods: methods,
 	}
-	userFields = make([]fieldsData, 0)
 
 	return nil
 }

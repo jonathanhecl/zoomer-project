@@ -69,6 +69,8 @@ func loadUserFields() bool {
 		return false
 	}
 
+	userFields = make([]fieldsData, 0)
+
 	decoder := json.NewDecoder(userFieldsData)
 	err = decoder.Decode(&userFields)
 	if err != nil {
