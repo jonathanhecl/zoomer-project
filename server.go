@@ -96,7 +96,7 @@ func headerHtml(w http.ResponseWriter) {
 				background-color: #333;
 				color: #ddd;
 				display: block;
-    			width: 100%;
+    			width: 100%%;
 			}
 			</style>
 		<body>
