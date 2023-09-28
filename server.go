@@ -63,19 +63,11 @@ func headerHtml(w http.ResponseWriter) {
 				display: flex; 
 				flex-direction: row;	
 			}
-			.collumns > .codes-full {
-				width: 100%%;
-				min-width: 400px;
-			}
 			.collumns > .codes {
-				width: 70%%;
 				min-width: 400px;
-			}
-			.collumns > .fields {
-				width: 30%%;
 			}
 			.float-right {
-				position: fixed;
+				// position: fixed;
 				bottom: 10px;
 				right: 20px;
 			}
@@ -165,41 +157,41 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
 						<h4>`+filename+`</h4>`)
 	fmt.Fprintf(w, `<div class="collumns">`)
-	if len(configProject.UserFields) > 0 {
-		fmt.Fprintf(w, `<div class="codes">`)
-	} else {
-		fmt.Fprintf(w, `<div class="codes-full">`)
-	}
-	fmt.Fprintf(w, `<pre>`)
-	if configProject.LangHighlight != "" {
-		fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
-	} else {
-		fmt.Fprintf(w, `<code>`)
-	}
-	fmt.Fprintf(w, parseEscapeHTML(filesData[filename].getContent()))
-	fmt.Fprintf(w, `</code></pre>`)
+	fmt.Fprintf(w, `<div class="codes">`)
+
+	fmt.Fprintf(w, filesData[filename].getContentHTMLWithFields())
+
+	//fmt.Fprintf(w, `<pre>`)
+	//if configProject.LangHighlight != "" {
+	//	fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
+	//} else {
+	//	fmt.Fprintf(w, `<code>`)
+	//}
+	//fmt.Fprintf(w, parseEscapeHTML(filesData[filename].getContent()))
+	//fmt.Fprintf(w, `</code></pre>`)
+
 	fmt.Fprintf(w, `</div>`)
 	if len(configProject.UserFields) > 0 {
-		fmt.Fprintf(w, `<div class="fields">`)
-		for _, method := range filesData[filename].getMethods() {
-			fmt.Fprintf(w, `<div class="method">`+method+`</div><br>`)
-			for _, field := range configProject.UserFields {
-				fmt.Fprintf(w, `<div class="field">`)
-				if field.Type == EnumBoolean {
-					fmt.Fprintf(w, `<label><input type="checkbox" name="`+createFieldName(filename, method, field.Name)+`" value="`+field.Name+`" `)
-					if getUserValue(filename, method, field.Name) == "1" {
-						fmt.Fprintf(w, `checked`)
-					}
-					fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
-				} else if field.Type == EnumTextBox {
-					fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+createFieldName(filename, method, field.Name)+`" onchange="saveChange(this)">`)
-					fmt.Fprintf(w, getUserValue(filename, method, field.Name))
-					fmt.Fprintf(w, `</textarea></label>`)
-				}
-				fmt.Fprintf(w, `</div>`)
-			}
-		}
-		fmt.Fprintf(w, `</div>`)
+		//fmt.Fprintf(w, `<div class="fields">`)
+		//for _, method := range filesData[filename].getMethods() {
+		//	fmt.Fprintf(w, `<div class="method">`+method+`</div><br>`)
+		//	for _, field := range configProject.UserFields {
+		//		fmt.Fprintf(w, `<div class="field">`)
+		//		if field.Type == EnumBoolean {
+		//			fmt.Fprintf(w, `<label><input type="checkbox" name="`+createFieldName(filename, method, field.Name)+`" value="`+field.Name+`" `)
+		//			if getUserValue(filename, method, field.Name) == "1" {
+		//				fmt.Fprintf(w, `checked`)
+		//			}
+		//			fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
+		//		} else if field.Type == EnumTextBox {
+		//			fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+createFieldName(filename, method, field.Name)+`" onchange="saveChange(this)">`)
+		//			fmt.Fprintf(w, getUserValue(filename, method, field.Name))
+		//			fmt.Fprintf(w, `</textarea></label>`)
+		//		}
+		//		fmt.Fprintf(w, `</div>`)
+		//	}
+		//}
+		//fmt.Fprintf(w, `</div>`)
 	}
 	fmt.Fprintf(w, `</div>`)
 }

@@ -24,6 +24,10 @@ var (
 	lastSave     time.Time
 )
 
+func (f fileData) getContentHTMLWithFields() string {
+	return parseEscapeHTML(strings.Join(f.Content, "\n"))
+}
+
 func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")
 }
