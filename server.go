@@ -67,7 +67,7 @@ func headerHtml(w http.ResponseWriter) {
 				min-width: 400px;
 			}
 			.float-right {
-				// position: fixed;
+				position: fixed;
 				bottom: 10px;
 				right: 20px;
 			}
