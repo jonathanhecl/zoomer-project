@@ -44,6 +44,10 @@ func headerHtml(w http.ResponseWriter) {
 				color: #d4d4d4;
 				font-family: monospace;
 			}
+			h4 {
+				font-size: xx-large;
+				text-align: center;
+			}
 			a {
 				color: #d4d4d4;
 			}
@@ -73,8 +77,9 @@ func headerHtml(w http.ResponseWriter) {
 			}
 			.fields > .method {
 				font-size: large;
+				color: lime;
     			//text-align: center;
-				padding: 2em 0 0;
+				//padding: 2em 0 0;
 			}
 			.field > label {
 				border: 1px solid #ccc;
@@ -157,44 +162,11 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 	filename := getFilename(filepath)
 	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
 						<h4>`+filename+`</h4>`)
+
 	fmt.Fprintf(w, `<div class="collumns">`)
 	fmt.Fprintf(w, `<div class="codes">`)
-
 	fmt.Fprintf(w, filesData[filename].getContentHTMLWithFields())
-
-	//fmt.Fprintf(w, `<pre>`)
-	//if configProject.LangHighlight != "" {
-	//	fmt.Fprintf(w, `<code class="`+configProject.LangHighlight+`">`)
-	//} else {
-	//	fmt.Fprintf(w, `<code>`)
-	//}
-	//fmt.Fprintf(w, parseEscapeHTML(filesData[filename].getContent()))
-	//fmt.Fprintf(w, `</code></pre>`)
-
-	fmt.Fprintf(w, `</div>`)
-	if len(configProject.UserFields) > 0 {
-		//fmt.Fprintf(w, `<div class="fields">`)
-		//for _, method := range filesData[filename].getMethods() {
-		//	fmt.Fprintf(w, `<div class="method">`+method+`</div><br>`)
-		//	for _, field := range configProject.UserFields {
-		//		fmt.Fprintf(w, `<div class="field">`)
-		//		if field.Type == EnumBoolean {
-		//			fmt.Fprintf(w, `<label><input type="checkbox" name="`+createFieldName(filename, method, field.Name)+`" value="`+field.Name+`" `)
-		//			if getUserValue(filename, method, field.Name) == "1" {
-		//				fmt.Fprintf(w, `checked`)
-		//			}
-		//			fmt.Fprintf(w, ` onchange="saveChange(this)"> `+field.Name+`</label>`)
-		//		} else if field.Type == EnumTextBox {
-		//			fmt.Fprintf(w, `<label>`+field.Name+`<br/><textarea name="`+createFieldName(filename, method, field.Name)+`" onchange="saveChange(this)">`)
-		//			fmt.Fprintf(w, getUserValue(filename, method, field.Name))
-		//			fmt.Fprintf(w, `</textarea></label>`)
-		//		}
-		//		fmt.Fprintf(w, `</div>`)
-		//	}
-		//}
-		//fmt.Fprintf(w, `</div>`)
-	}
-	fmt.Fprintf(w, `</div>`)
+	fmt.Fprintf(w, `</div></div>`)
 }
 
 func createFieldName(filename string, method string, field string) string {

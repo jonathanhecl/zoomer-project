@@ -37,6 +37,7 @@ func (f fileData) getContentHTMLWithFields() string {
 		}
 		content += parseEscapeHTML(strings.Join(f.Content[prevMethod:method], "\n"))
 		content += `</code></pre>`
+
 		if len(configProject.UserFields) > 0 {
 			content += `<div class="fields">`
 			content += `<div class="method">` + f.Content[method] + `</div><br>`
