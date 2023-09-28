@@ -38,27 +38,25 @@ func (f fileData) getContentHTMLWithFields() string {
 		content += parseEscapeHTML(strings.Join(f.Content[prevMethod:method], "\n"))
 		content += `</code></pre>`
 		if len(configProject.UserFields) > 0 {
-			fmt.Println("Filename:", f.Filename+" Method:", f.Content[method])
-			//content += `<div class="fields">`
-			//for _, mtd := range filesData[f.Filename].getMethods() {
-			//	content += `<div class="method">` + mtd + `</div><br>`
-			//	for _, field := range configProject.UserFields {
-			//		content += `<div class="field">`
-			//		if field.Type == EnumBoolean {
-			//			content += `<label><input type="checkbox" name="` + createFieldName(f.Filename, mtd, field.Name) + `" value="` + field.Name + `" `
-			//			if getUserValue(f.Filename, mtd, field.Name) == "1" {
-			//				content += `checked`
-			//			}
-			//			content += ` onchange="saveChange(this)"> ` + field.Name + `</label>`
-			//		} else if field.Type == EnumTextBox {
-			//			content += `<label>` + field.Name + `<br/><textarea name="` + createFieldName(f.Filename, mtd, field.Name) + `" onchange="saveChange(this)">`
-			//			content += getUserValue(f.Filename, mtd, field.Name)
-			//			content += `</textarea></label>`
-			//		}
-			//		content += `</div>`
-			//	}
-			//}
-			//content += `</div>`
+			content += `<div class="fields">`
+			content += `<div class="method">` + f.Content[method] + `</div><br>`
+			for _, field := range configProject.UserFields {
+				content += `<div class="field">`
+				if field.Type == EnumBoolean {
+					content += `<label><input type="checkbox" name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" value="` + field.Name + `" `
+					if getUserValue(f.Filename, f.Content[method], field.Name) == "1" {
+						content += `checked`
+					}
+					content += ` onchange="saveChange(this)"> ` + field.Name + `</label>`
+				} else if field.Type == EnumTextBox {
+					content += `<label>` + field.Name + `<br/><textarea name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" onchange="saveChange(this)">`
+					content += getUserValue(f.Filename, f.Content[method], field.Name)
+					content += `</textarea></label>`
+				}
+				content += `</div>`
+			}
+
+			content += `</div>`
 		}
 		prevMethod = method
 	}
@@ -70,16 +68,16 @@ func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")
 }
 
-func (f fileData) getMethods() []string {
-	methods := []string{}
-	for _, method := range f.Methods {
-		mtd := f.Content[method]
-		mtd = strings.ReplaceAll(mtd, "\n", "")
-		mtd = strings.ReplaceAll(mtd, "\r", "")
-		methods = append(methods, mtd)
-	}
-	return methods
-}
+//func (f fileData) getMethods() []string {
+//	methods := []string{}
+//	for _, method := range f.Methods {
+//		mtd := f.Content[method]
+//		mtd = strings.ReplaceAll(mtd, "\n", "")
+//		mtd = strings.ReplaceAll(mtd, "\r", "")
+//		methods = append(methods, mtd)
+//	}
+//	return methods
+//}
 
 func getFilename(filepath string) string {
 	filename := strings.ReplaceAll(filepath, pathProject, "")

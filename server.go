@@ -73,7 +73,7 @@ func headerHtml(w http.ResponseWriter) {
 			}
 			.fields > .method {
 				font-size: large;
-    			text-align: center;
+    			//text-align: center;
 				padding: 2em 0 0;
 			}
 			.field > label {
@@ -91,6 +91,7 @@ func headerHtml(w http.ResponseWriter) {
 				background-color: #333;
 				color: #ddd;
 				display: block;
+    			width: 100%;
 			}
 			</style>
 		<body>
