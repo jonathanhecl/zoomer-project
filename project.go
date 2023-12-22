@@ -12,8 +12,9 @@ import (
 )
 
 type fileData struct {
-	Content []string
-	Methods []int
+	Filename string
+	Content  []string
+	Methods  []int
 }
 
 var (
@@ -24,20 +25,60 @@ var (
 	lastSave     time.Time
 )
 
+func (f fileData) getContentHTMLWithFields() string {
+	var content string = ""
+	var prevMethod int = 0
+	for _, method := range f.Methods {
+		content += `<pre>`
+		if configProject.LangHighlight != "" {
+			content += `<code class="` + configProject.LangHighlight + `">`
+		} else {
+			content += `<code>`
+		}
+		content += parseEscapeHTML(strings.Join(f.Content[prevMethod:method], "\n"))
+		content += `</code></pre>`
+
+		if len(configProject.UserFields) > 0 {
+			content += `<div class="fields">`
+			content += `<div class="method">` + f.Content[method] + `</div><br>`
+			for _, field := range configProject.UserFields {
+				content += `<div class="field">`
+				if field.Type == EnumBoolean {
+					content += `<label><input type="checkbox" name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" value="` + field.Name + `" `
+					if getUserValue(f.Filename, f.Content[method], field.Name) == "1" {
+						content += `checked`
+					}
+					content += ` onchange="saveChange(this)"> ` + field.Name + `</label>`
+				} else if field.Type == EnumTextBox {
+					content += `<label>` + field.Name + `<br/><textarea name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" onchange="saveChange(this)">`
+					content += getUserValue(f.Filename, f.Content[method], field.Name)
+					content += `</textarea></label>`
+				}
+				content += `</div>`
+			}
+
+			content += `</div>`
+		}
+		prevMethod = method
+	}
+
+	return content
+}
+
 func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")
 }
 
-func (f fileData) getMethods() []string {
-	methods := []string{}
-	for _, method := range f.Methods {
-		mtd := f.Content[method]
-		mtd = strings.ReplaceAll(mtd, "\n", "")
-		mtd = strings.ReplaceAll(mtd, "\r", "")
-		methods = append(methods, mtd)
-	}
-	return methods
-}
+//func (f fileData) getMethods() []string {
+//	methods := []string{}
+//	for _, method := range f.Methods {
+//		mtd := f.Content[method]
+//		mtd = strings.ReplaceAll(mtd, "\n", "")
+//		mtd = strings.ReplaceAll(mtd, "\r", "")
+//		methods = append(methods, mtd)
+//	}
+//	return methods
+//}
 
 func getFilename(filepath string) string {
 	filename := strings.ReplaceAll(filepath, pathProject, "")
@@ -106,8 +147,9 @@ func loadFileData(filename string) error {
 	}
 
 	filesData[getFilename(filename)] = fileData{
-		Content: content,
-		Methods: methods,
+		Filename: filename,
+		Content:  content,
+		Methods:  methods,
 	}
 
 	return nil
