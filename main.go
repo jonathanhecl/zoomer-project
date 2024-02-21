@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 )
 
 const (
@@ -27,13 +26,13 @@ func main() {
 	}
 
 	if !isValidPath(pathProject) {
-		fmt.Println("Invalid path")
-		os.Exit(1)
+		fmt.Println(pathProject + " is not a valid path")
+		return
 	}
 
 	if !loadProject() {
-		fmt.Println("Failed to load project")
-		os.Exit(1)
+		fmt.Println("Error loading project")
+		return
 	}
 
 	go waitToSave()
