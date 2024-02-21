@@ -1,13 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
 const (
 	// Version of the application
-	Version = "0.0.4"
+	Version = "0.0.5"
 )
 
 var (
@@ -17,11 +18,13 @@ var (
 func main() {
 	fmt.Println("Zoomer Project v" + Version + " by ^[GS]^")
 
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: zoomer <project path>")
-		os.Exit(1)
+	flag.StringVar(&pathProject, "path", "", "project path")
+	flag.Parse()
+
+	if pathProject == "" {
+		fmt.Println("Usage: zoomer --path <project path>")
+		return
 	}
-	pathProject = os.Args[1]
 
 	if !isValidPath(pathProject) {
 		fmt.Println("Invalid path")
