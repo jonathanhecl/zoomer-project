@@ -9,7 +9,7 @@
 *.dylib
 .temp
 go.sum
-*.json
+/*.json
 .idea/
 
 # Test binary, built with `go test -c`

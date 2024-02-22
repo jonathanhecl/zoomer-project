@@ -1,0 +1,20 @@
+{
+    "project_name": "Golang Project",
+    "lang_highlight": "go",
+    "ext_filter": [
+        ".go"
+    ],
+    "method_filter": [
+        "func (.*)"
+    ],
+    "user_fields": [
+        {
+            "Name": "Checked",
+            "Type": "boolean"
+        },
+        {
+            "Name": "Notes",
+            "Type": "textbox"
+        }
+    ]
+}
