@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	listenPort = 80
-)
-
 func initServer() {
 	srv := http.Server{
 		Addr: fmt.Sprint(":", listenPort),

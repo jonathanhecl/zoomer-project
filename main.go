@@ -12,16 +12,24 @@ const (
 
 var (
 	pathProject string
+	listenPort  = "80"
 )
 
 func main() {
 	fmt.Println("Zoomer Project v" + Version + " by ^[GS]^")
 
 	flag.StringVar(&pathProject, "path", "", "project path")
+	flag.StringVar(&listenPort, "port", "80", "port to listen")
 	flag.Parse()
 
 	if pathProject == "" {
-		fmt.Println("Usage: zoomer --path <project path>")
+		fmt.Println("Usage: zoomer --path <project path> [--port <port>]")
+		return
+	}
+
+	// check if port is valid
+	if !isValidPort(listenPort) {
+		fmt.Println(listenPort + " is not a valid port")
 		return
 	}
 
