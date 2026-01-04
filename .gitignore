@@ -13,9 +13,15 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+.temp
+.idea
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
 # Go workspace file
 go.work
+
+# Zoomer
+zoomer-config.json
+zoomer-project
