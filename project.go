@@ -124,11 +124,22 @@ func isExtFilter(filename string) bool {
 }
 
 func loadFileData(filename string) error {
+	const maxFileSize = 10 * 1024 * 1024 // 10MB limit
+
 	file, err := os.Open(filename)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
+
+	stat, err := file.Stat()
+	if err != nil {
+		return err
+	}
+
+	if stat.Size() > maxFileSize {
+		return fmt.Errorf("file too large: %s (size: %d, max: %d)", filename, stat.Size(), maxFileSize)
+	}
 
 	data, err := io.ReadAll(file)
 	if err != nil {
@@ -188,11 +199,11 @@ func scanProject(root string, list []string) ([]string, error) {
 
 	for _, f := range files {
 		if f.IsDir() {
-			filesTmp, err = scanProject(path.Join(root, f.Name())+string(filepath.Separator), filesOut)
+			filesTmp, err = scanProject(path.Join(root, f.Name())+string(filepath.Separator), nil)
 			if err != nil {
 				return nil, err
 			}
-			filesOut = filesTmp
+			filesOut = append(filesOut, filesTmp...)
 		}
 	}
 
@@ -203,6 +214,10 @@ func changedUserField(name string, value string) bool {
 	fmt.Println("Changed:", name, value)
 
 	filename, method, field := disassemblyFieldName(name)
+	if filename == "" || method == "" || field == "" {
+		fmt.Println("Invalid field name format")
+		return false
+	}
 
 	setUserValue(filename, method, field, value)
 	lastChange = time.Now()

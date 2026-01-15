@@ -173,6 +173,9 @@ func createFieldName(filename string, method string, field string) string {
 
 func disassemblyFieldName(fieldName string) (string, string, string) {
 	fields := strings.Split(fieldName, `<>`)
+	if len(fields) != 3 {
+		return "", "", ""
+	}
 	return fields[0], fields[1], fields[2]
 }
 

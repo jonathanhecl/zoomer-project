@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"sync"
 	"time"
 )
 
@@ -14,6 +15,10 @@ type fieldsData struct {
 	Field    string
 	Value    string
 }
+
+var (
+	userFieldsMutex sync.Mutex
+)
 
 func waitToSave() {
 	c := time.Tick(time.Second * 30)
@@ -25,6 +30,9 @@ func waitToSave() {
 }
 
 func setUserValue(filename string, method string, field string, value string) {
+	userFieldsMutex.Lock()
+	defer userFieldsMutex.Unlock()
+
 	found := false
 
 	for i := range userFields {
@@ -48,6 +56,9 @@ func setUserValue(filename string, method string, field string, value string) {
 }
 
 func getUserValue(filename string, method string, field string) string {
+	userFieldsMutex.Lock()
+	defer userFieldsMutex.Unlock()
+
 	for _, userField := range userFields {
 		if userField.Filename == filename &&
 			userField.Method == method &&
@@ -84,6 +95,9 @@ func loadUserFields() bool {
 }
 
 func saveFileUserFields() {
+	userFieldsMutex.Lock()
+	defer userFieldsMutex.Unlock()
+
 	if time.Since(lastSave) <= time.Since(lastChange) {
 		fmt.Println("No changes to save")
 		return
