@@ -1,0 +1,20 @@
+{
+    "project_name": "VB6 Project",
+    "lang_highlight": "vb",
+    "ext_filter": [
+        ".bas", ".frm", ".cls"
+    ],
+    "method_filter": [
+        "Sub (.*)", "Function (.*)"
+    ],
+    "user_fields": [
+        {
+            "Name": "Checked",
+            "Type": "boolean"
+        },
+        {
+            "Name": "Notes",
+            "Type": "textbox"
+        }
+    ]
+}

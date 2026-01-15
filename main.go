@@ -7,26 +7,23 @@ import (
 
 const (
 	// Version of the application
-	Version = "0.0.5"
+	Version = "0.0.7"
 )
 
 var (
 	pathProject string
+	listenPort  = "80"
 )
 
 func main() {
 	fmt.Println("Zoomer Project v" + Version + " by ^[GS]^")
 
 	flag.StringVar(&pathProject, "path", "", "project path")
+	flag.StringVar(&listenPort, "port", "80", "port to listen")
 	flag.Parse()
 
-	if pathProject == "" {
-		fmt.Println("Usage: zoomer --path <project path>")
-		return
-	}
-
-	if !isValidPath(pathProject) {
-		fmt.Println(pathProject + " is not a valid path")
+	if pathProject == "" || !isValidPath(pathProject) || !isValidPort(listenPort) {
+		fmt.Println("Usage: zoomer --path <project path> [--port <port>]")
 		return
 	}
 

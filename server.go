@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-const (
-	listenPort = 80
-)
-
 func initServer() {
 	srv := http.Server{
 		Addr: fmt.Sprint(":", listenPort),
@@ -34,8 +30,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func headerHtml(w http.ResponseWriter) {
 	fmt.Fprintf(w, `
+	<!DOCTYPE html>
 		<html data-theme="dark">
 			<head>
+			<meta charset="UTF-8">
 			<title>`+configProject.ProjectName+`</title>
 			</head>
 			<style>
