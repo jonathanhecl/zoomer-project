@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -160,10 +159,10 @@ func loadFileData(filename string) error {
 
 	for i, line := range strings.Split(fileString, "\n") {
 		content = append(content, line)
-		for _, method := range configProject.MethodFilter {
-			re, _ := regexp.Compile(method)
+		for _, re := range methodFilterRegexes {
 			if re.MatchString(line) {
 				methods = append(methods, i)
+				break // Solo necesitamos que coincida con un patrón
 			}
 		}
 	}
