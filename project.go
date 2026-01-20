@@ -97,10 +97,11 @@ func loadProject() bool {
 
 	projectFiles, err = scanProject(pathProject, nil)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error scanning project: %v\n", err)
 		return false
 	}
 
+	fmt.Printf("Project loaded: %d file(s) found\n", len(projectFiles))
 	return true
 }
 
@@ -201,11 +202,9 @@ func scanProject(root string, list []string) ([]string, error) {
 }
 
 func changedUserField(name string, value string) bool {
-	fmt.Println("Changed:", name, value)
-
 	filename, method, field := disassemblyFieldName(name)
 	if filename == "" || method == "" || field == "" {
-		fmt.Println("Invalid field name format")
+		fmt.Printf("Invalid field name format: %s\n", name)
 		return false
 	}
 
