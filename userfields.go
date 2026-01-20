@@ -98,7 +98,7 @@ func saveFileUserFields() {
 	userFieldsMutex.Lock()
 	defer userFieldsMutex.Unlock()
 
-	if time.Since(lastSave) <= time.Since(lastChange) {
+	if !lastChange.After(lastSave) {
 		fmt.Println("No changes to save")
 		return
 	}
@@ -116,6 +116,7 @@ func saveFileUserFields() {
 	defer f.Close()
 
 	encoder := json.NewEncoder(f)
+	encoder.SetIndent("", "    ")
 	err = encoder.Encode(userFields)
 	if err != nil {
 		fmt.Println(err)
@@ -123,4 +124,5 @@ func saveFileUserFields() {
 	}
 
 	lastSave = time.Now()
+	fmt.Println("Changes saved successfully")
 }
