@@ -172,8 +172,9 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 }
 
 func createFieldName(filename string, method string, field string) string {
-	// Usar un delimitador seguro que no aparezca en nombres de archivo normales
-	return html.EscapeString(filename) + `<>` + html.EscapeString(method) + `<>` + html.EscapeString(field)
+	// Los valores no deben ser escapados aquí porque se usan para identificación
+	// El escape se hace donde se muestran en el HTML
+	return filename + `<>` + method + `<>` + field
 }
 
 func disassemblyFieldName(fieldName string) (string, string, string) {
