@@ -107,8 +107,8 @@ func headerHtml(w http.ResponseWriter) {
 		<body>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-		<h1 id="top">`+configProject.ProjectName+`</h1>
-		<span>Project path: `+pathProject+`</span>
+		<h1 id="top">`+parseEscapeHTML(configProject.ProjectName)+`</h1>
+		<span>Project path: `+parseEscapeHTML(pathProject)+`</span>
 		<div class="float-right">
 			`+getFilelistDropdownHtml()+`
 			<a href="#top">Go Top</a>
@@ -141,7 +141,7 @@ func getFilelistDropdownHtml() string {
 	var html string = `<select onchange="location = this.value;">`
 	for _, filepath := range projectFiles {
 		filename := getFilename(filepath)
-		html += `<option value="#` + getFileID(filename) + `">` + filename + `</option>`
+		html += `<option value="#` + getFileID(filename) + `">` + parseEscapeHTML(filename) + `</option>`
 	}
 	html += `</select>`
 	return html
@@ -163,7 +163,7 @@ func parseEscapeHTML(data string) string {
 func showSourceHtml(w http.ResponseWriter, filepath string) {
 	filename := getFilename(filepath)
 	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
-						<h4>`+filename+`</h4>`)
+						<h4>`+parseEscapeHTML(filename)+`</h4>`)
 
 	fmt.Fprintf(w, `<div class="collumns">`)
 	fmt.Fprintf(w, `<div class="codes">`)

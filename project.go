@@ -41,18 +41,20 @@ func (f fileData) getContentHTMLWithFields() string {
 
 		if len(configProject.UserFields) > 0 {
 			content += `<div class="fields">`
-			content += `<div class="method">` + f.Content[method] + `</div><br>`
+			content += `<div class="method">` + parseEscapeHTML(f.Content[method]) + `</div><br>`
 			for _, field := range configProject.UserFields {
 				content += `<div class="field">`
+				fieldNameEscaped := parseEscapeHTML(field.Name)
+				fieldNameAttr := createFieldName(f.Filename, f.Content[method], field.Name)
 				if field.Type == EnumBoolean {
-					content += `<label><input type="checkbox" name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" value="` + field.Name + `" `
+					content += `<label><input type="checkbox" name="` + fieldNameAttr + `" value="` + fieldNameEscaped + `" `
 					if getUserValue(f.Filename, f.Content[method], field.Name) == "1" {
 						content += `checked`
 					}
-					content += ` onchange="saveChange(this)"> ` + field.Name + `</label>`
+					content += ` onchange="saveChange(this)"> ` + fieldNameEscaped + `</label>`
 				} else if field.Type == EnumTextBox {
-					content += `<label>` + field.Name + `<br/><textarea name="` + createFieldName(f.Filename, f.Content[method], field.Name) + `" onchange="saveChange(this)">`
-					content += getUserValue(f.Filename, f.Content[method], field.Name)
+					content += `<label>` + fieldNameEscaped + `<br/><textarea name="` + fieldNameAttr + `" onchange="saveChange(this)">`
+					content += parseEscapeHTML(getUserValue(f.Filename, f.Content[method], field.Name))
 					content += `</textarea></label>`
 				}
 				content += `</div>`
