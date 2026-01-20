@@ -45,7 +45,7 @@ func (f fileData) getContentHTMLWithFields() string {
 			for _, field := range configProject.UserFields {
 				content += `<div class="field">`
 				fieldNameEscaped := parseEscapeHTML(field.Name)
-				fieldNameAttr := createFieldName(f.Filename, f.Content[method], field.Name)
+				fieldNameAttr := parseEscapeHTML(createFieldName(f.Filename, f.Content[method], field.Name))
 				if field.Type == EnumBoolean {
 					content += `<label><input type="checkbox" name="` + fieldNameAttr + `" value="` + fieldNameEscaped + `" `
 					if getUserValue(f.Filename, f.Content[method], field.Name) == "1" {
