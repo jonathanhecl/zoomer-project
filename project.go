@@ -72,17 +72,6 @@ func (f fileData) getContent() string {
 	return strings.Join(f.Content, "\n")
 }
 
-//func (f fileData) getMethods() []string {
-//	methods := []string{}
-//	for _, method := range f.Methods {
-//		mtd := f.Content[method]
-//		mtd = strings.ReplaceAll(mtd, "\n", "")
-//		mtd = strings.ReplaceAll(mtd, "\r", "")
-//		methods = append(methods, mtd)
-//	}
-//	return methods
-//}
-
 func getFilename(filepath string) string {
 	filename := strings.ReplaceAll(filepath, pathProject, "")
 	filename = strings.ReplaceAll(filename, "\\", "/")

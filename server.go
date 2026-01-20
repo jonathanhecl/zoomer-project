@@ -29,7 +29,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	headerHtml(w)
 	fmt.Fprintf(w, "<h3>Project files:</h3>")
 	for _, filepath := range projectFiles {
-		//showFilelistHtml(w, filepath)
 		showSourceHtml(w, filepath)
 	}
 	footerHtml(w)
@@ -83,8 +82,6 @@ func headerHtml(w http.ResponseWriter) {
 			.fields > .method {
 				font-size: large;
 				color: lime;
-    			//text-align: center;
-				//padding: 2em 0 0;
 			}
 			.field > label {
 				border: 1px solid #ccc;
