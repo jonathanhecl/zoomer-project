@@ -68,7 +68,9 @@ func createConfig() bool {
 }
 
 func loadConfig() bool {
-	if !isValidFile(path.Join(pathProject, configFilename)) {
+	configPath := path.Join(pathProject, configFilename)
+	if !isValidFile(configPath) {
+		fmt.Println("Config file not found, creating new one...")
 		if !createConfig() {
 			fmt.Println("Failed to create config file")
 			return false
@@ -76,9 +78,9 @@ func loadConfig() bool {
 		return false
 	}
 
-	configFile, err := os.Open(path.Join(pathProject, configFilename))
+	configFile, err := os.Open(configPath)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error opening config file: %v\n", err)
 		return false
 	}
 	defer configFile.Close()
@@ -86,7 +88,7 @@ func loadConfig() bool {
 	decoder := json.NewDecoder(configFile)
 	err = decoder.Decode(&configProject)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error decoding config file: %v\n", err)
 		return false
 	}
 
@@ -101,6 +103,6 @@ func loadConfig() bool {
 		methodFilterRegexes = append(methodFilterRegexes, re)
 	}
 
-	fmt.Println("Config loaded! (", configProject.ProjectName, ")")
+	fmt.Printf("Config loaded successfully: %s\n", configProject.ProjectName)
 	return true
 }

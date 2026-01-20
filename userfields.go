@@ -70,27 +70,32 @@ func getUserValue(filename string, method string, field string) string {
 }
 
 func loadUserFields() bool {
-	if !isValidFile(path.Join(pathProject, userFieldsFilename)) {
-		return false
+	userFieldsPath := path.Join(pathProject, userFieldsFilename)
+	if !isValidFile(userFieldsPath) {
+		fmt.Println("User fields file not found, starting with empty fields")
+		userFields = make([]fieldsData, 0)
+		return true
 	}
 
-	userFieldsData, err := os.Open(path.Join(pathProject, userFieldsFilename))
+	userFieldsData, err := os.Open(userFieldsPath)
 	if err != nil {
-		fmt.Println(err)
-		return false
+		fmt.Printf("Error opening user fields file: %v\n", err)
+		userFields = make([]fieldsData, 0)
+		return true // Continuar sin campos de usuario
 	}
+	defer userFieldsData.Close()
 
 	userFields = make([]fieldsData, 0)
 
 	decoder := json.NewDecoder(userFieldsData)
 	err = decoder.Decode(&userFields)
 	if err != nil {
-		fmt.Println(err)
-		return false
+		fmt.Printf("Error decoding user fields file: %v\n", err)
+		userFields = make([]fieldsData, 0)
+		return true // Continuar sin campos de usuario
 	}
 
-	fmt.Println("User fields loaded! (", len(userFields), ")")
-
+	fmt.Printf("User fields loaded: %d field(s)\n", len(userFields))
 	return true
 }
 
@@ -99,18 +104,21 @@ func saveFileUserFields() {
 	defer userFieldsMutex.Unlock()
 
 	if !lastChange.After(lastSave) {
-		fmt.Println("No changes to save")
-		return
-	}
-	fmt.Println("Saving changes")
-
-	if _, err := os.Stat(path.Join(pathProject, userFieldsFilename)); err == nil {
-		os.Remove(path.Join(pathProject, userFieldsFilename))
+		return // Sin cambios, no hay nada que guardar
 	}
 
-	f, err := os.Create(path.Join(pathProject, userFieldsFilename))
+	userFieldsPath := path.Join(pathProject, userFieldsFilename)
+	
+	// Eliminar archivo existente si existe
+	if _, err := os.Stat(userFieldsPath); err == nil {
+		if err := os.Remove(userFieldsPath); err != nil {
+			fmt.Printf("Warning: error removing old user fields file: %v\n", err)
+		}
+	}
+
+	f, err := os.Create(userFieldsPath)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error creating user fields file: %v\n", err)
 		return
 	}
 	defer f.Close()
@@ -119,10 +127,10 @@ func saveFileUserFields() {
 	encoder.SetIndent("", "    ")
 	err = encoder.Encode(userFields)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error encoding user fields: %v\n", err)
 		return
 	}
 
 	lastSave = time.Now()
-	fmt.Println("Changes saved successfully")
+	fmt.Printf("User fields saved: %d field(s)\n", len(userFields))
 }
