@@ -32,7 +32,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	for _, filepath := range projectFiles {
 		showSourceHtml(w, filepath)
 	}
-	fmt.Fprintf(w, `</div></div class="container">`)
+	fmt.Fprintf(w, `</div></div>`)
 	footerHtml(w)
 }
 
@@ -412,13 +412,14 @@ func parseEscapeHTML(data string) string {
 
 func showSourceHtml(w http.ResponseWriter, filepath string) {
 	filename := getFilename(filepath)
-	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>
-						<h4>`+parseEscapeHTML(filename)+`</h4>`)
+	fmt.Fprintf(w, `<div id="`+getFileID(filename)+`" class="mark"></div>`)
+	fmt.Fprintf(w, `<div class="file-section">`)
+	fmt.Fprintf(w, `<h4>📄 `+parseEscapeHTML(filename)+`</h4>`)
 
 	fmt.Fprintf(w, `<div class="collumns">`)
 	fmt.Fprintf(w, `<div class="codes">`)
 	fmt.Fprintf(w, filesData[filename].getContentHTMLWithFields())
-	fmt.Fprintf(w, `</div></div>`)
+	fmt.Fprintf(w, `</div></div></div>`)
 }
 
 func createFieldName(filename string, method string, field string) string {
