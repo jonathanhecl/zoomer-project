@@ -384,6 +384,7 @@ func footerHtml(w http.ResponseWriter) {
 		}
 
 		</script>
+		</div>
 		</body></html>`)
 }
 
