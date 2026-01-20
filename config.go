@@ -39,7 +39,7 @@ type config struct {
 }
 
 func createConfig() bool {
-	fmt.Println("Creating config file")
+	fmt.Println("Creating config file:", path.Join(pathProject, configFilename))
 	newConfig := config{
 		ProjectName:   "New Project",
 		LangHighlight: "go",
@@ -50,7 +50,7 @@ func createConfig() bool {
 
 	configFile, err := os.Create(path.Join(pathProject, configFilename))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error creating config file: %v\n", err)
 		return false
 	}
 	defer configFile.Close()
@@ -59,10 +59,11 @@ func createConfig() bool {
 	encoder.SetIndent("", "    ")
 	err = encoder.Encode(newConfig)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Error encoding config: %v\n", err)
 		return false
 	}
 
+	fmt.Println("Config file created successfully")
 	return true
 }
 
