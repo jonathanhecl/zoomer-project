@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"regexp"
 )
 
 const (
@@ -13,7 +14,8 @@ const (
 )
 
 var (
-	configProject config
+	configProject        config
+	methodFilterRegexes []*regexp.Regexp
 )
 
 type EnumFieldType string
@@ -85,6 +87,17 @@ func loadConfig() bool {
 	if err != nil {
 		fmt.Println(err)
 		return false
+	}
+
+	// Precompilar expresiones regulares para mejor rendimiento
+	methodFilterRegexes = make([]*regexp.Regexp, 0, len(configProject.MethodFilter))
+	for _, pattern := range configProject.MethodFilter {
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			fmt.Printf("Warning: invalid regex pattern '%s': %v\n", pattern, err)
+			continue
+		}
+		methodFilterRegexes = append(methodFilterRegexes, re)
 	}
 
 	fmt.Println("Config loaded! (", configProject.ProjectName, ")")
