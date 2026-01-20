@@ -1,8 +1,8 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	"html"
 	"net/http"
 	"strings"
 	"time"
@@ -10,14 +10,19 @@ import (
 
 func initServer() {
 	srv := http.Server{
-		Addr: fmt.Sprint(":", listenPort),
+		Addr:         fmt.Sprint(":", listenPort),
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
 	}
 
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/save", saveHandler)
 
 	fmt.Println("Server is listening on port", listenPort)
-	srv.ListenAndServe()
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		fmt.Printf("Server error: %v\n", err)
+	}
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -152,10 +157,7 @@ func getFileID(filename string) string {
 }
 
 func parseEscapeHTML(data string) string {
-	data = strings.ReplaceAll(data, "<", "&lt;")
-	data = strings.ReplaceAll(data, ">", "&gt;")
-
-	return data
+	return html.EscapeString(data)
 }
 
 func showSourceHtml(w http.ResponseWriter, filepath string) {
@@ -170,7 +172,8 @@ func showSourceHtml(w http.ResponseWriter, filepath string) {
 }
 
 func createFieldName(filename string, method string, field string) string {
-	return filename + `<>` + method + `<>` + field
+	// Usar un delimitador seguro que no aparezca en nombres de archivo normales
+	return html.EscapeString(filename) + `<>` + html.EscapeString(method) + `<>` + html.EscapeString(field)
 }
 
 func disassemblyFieldName(fieldName string) (string, string, string) {
@@ -182,8 +185,25 @@ func disassemblyFieldName(fieldName string) (string, string, string) {
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	if !changedUserField(r.Form.Get("name"), r.Form.Get("value")) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	if err := r.ParseForm(); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	name := r.Form.Get("name")
+	value := r.Form.Get("value")
+
+	if name == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !changedUserField(name, value) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
