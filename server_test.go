@@ -143,11 +143,13 @@ func TestParseEscapeHTML(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{"<script>alert('xss')</script>", "&lt;script&gt;alert('xss')&lt;/script&gt;"},
+		// html.EscapeString escapa más caracteres que la implementación anterior (más seguro)
+		{"<script>alert('xss')</script>", "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;"},
 		{"<div>content</div>", "&lt;div&gt;content&lt;/div&gt;"},
 		{"normal text", "normal text"},
-		{"a < b && c > d", "a &lt; b && c &gt; d"},
+		{"a < b && c > d", "a &lt; b &amp;&amp; c &gt; d"}, // & también se escapa
 		{"", ""},
+		{"&amp;", "&amp;amp;"}, // & existente se escapa correctamente
 	}
 
 	for _, test := range tests {

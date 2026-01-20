@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -75,6 +76,16 @@ func test() {
 	// Setup config
 	configProject = config{
 		MethodFilter: []string{`func \(.*\) .*\(.*\).*{`, `func .*\(.*\).*{`},
+	}
+
+	// Precompilar expresiones regulares (como lo hace loadConfig)
+	methodFilterRegexes = make([]*regexp.Regexp, 0, len(configProject.MethodFilter))
+	for _, pattern := range configProject.MethodFilter {
+		re, err := regexp.Compile(pattern)
+		if err != nil {
+			t.Fatalf("Failed to compile regex pattern '%s': %v", pattern, err)
+		}
+		methodFilterRegexes = append(methodFilterRegexes, re)
 	}
 
 	// Initialize filesData map
